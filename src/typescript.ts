@@ -48,13 +48,16 @@ export function extractFileNames(cwd: string, provider: string, functions?: { [k
   }
 
   return _.values(functions)
-    .map(fn => fn.handler)
-    .map(h => {
-      const fnName = _.last(h.split('.'))
-      const fnNameLastAppearanceIndex = h.lastIndexOf(fnName)
-      // replace only last instance to allow the same name for file and handler
-      return h.substring(0, fnNameLastAppearanceIndex) + 'ts'
+    .map(fn => {
+      const fnName = _.last(fn.handler.split('.'))
+      if (!fn.runtime || fn.runtime.search('node') > -1) {
+          const fnNameLastAppearanceIndex = fn.handler.lastIndexOf(fnName)
+          // replace only last instance to allow the same name for file and handler
+          return fn.handler.substring(0, fnNameLastAppearanceIndex) + 'ts'
+      }
+      return null
     })
+    .filter(name => name !== null)
 }
 
 export async function run(fileNames: string[], options: ts.CompilerOptions): Promise<string[]> {

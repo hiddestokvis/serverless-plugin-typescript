@@ -24,6 +24,7 @@ export interface ServerlessOptions {
 
 export interface ServerlessFunction {
   handler: string
+  runtime: string
   package: ServerlessPackage
 }
 
